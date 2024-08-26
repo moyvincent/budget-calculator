@@ -30,6 +30,7 @@ jobs:
                 HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
               run: |
                 npm install -g heroku
+                echo "$HEROKU_API_KEY" | heroku auth:token --stdin
                 heroku git:remote -a bcfrontend
-                git push heroku `git subtree split --prefix build main`:refs/heads/main --force
+                git push heroku `git subtree split --prefix build main`:refs/heads/master --force
       
