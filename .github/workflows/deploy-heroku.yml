@@ -26,11 +26,9 @@ jobs:
               run: npm run build
       
             - name: Deploy to Heroku
-              env:
-                HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-              run: |
-                npm install -g heroku
-                echo "$HEROKU_API_KEY" | heroku auth:login --with-token
-                heroku git:remote -a bcfrontend
-                git push heroku `git subtree split --prefix build main`:refs/heads/master --force
+              uses: akhileshns/heroku-deploy@v3.13.15 # This is the action
+              with:
+                    HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY}}
+                    heroku_app_name: "bcfrontend" #Must be unique in Heroku
+                    heroku_email: "moyakivincent@yahoo.com"
       
