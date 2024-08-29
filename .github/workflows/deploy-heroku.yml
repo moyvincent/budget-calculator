@@ -24,6 +24,11 @@ jobs:
               env:
                 CI: false
               run: npm run build
+            
+            - name: Install Heroku CLI
+              run: |
+                curl https://cli-assets.heroku.com/install.sh | sh
+                heroku --version
       
             - name: Deploy to Heroku
               uses: akhileshns/heroku-deploy@v3.13.15 # This is the action
