@@ -31,8 +31,8 @@ jobs:
                 heroku_api_key: ${{secrets.HEROKU_API_KEY}}
                 heroku_app_name: "bcfrontend" #Must be unique in Heroku
                 heroku_email: "moyakivincent@yahoo.com"
-            - run: |
-                echo "$HEROKU_API_KEY" | heroku auth:token
-                heroku git:remote -a bcfrontend
-                git push heroku `git subtree split --prefix build master`:refs/heads/main --force
+                run: |
+                  echo "$HEROKU_API_KEY" | heroku auth:token
+                  heroku git:remote -a bcfrontend
+                  git push heroku `git subtree split --prefix build master`:refs/heads/main --force
       
