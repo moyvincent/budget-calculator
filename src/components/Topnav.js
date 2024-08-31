@@ -1,4 +1,5 @@
 import React from "react";
+import ProfileHeader from "./ProfileHeader";
 
 const Topnav = () => {
   return (
@@ -53,6 +54,7 @@ const Topnav = () => {
             </button>
           </form>
         </div>
+        <ProfileHeader />
       </div>
     </nav>
   );
