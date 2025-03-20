@@ -1,0 +1,150 @@
+.App {
+  min-height: 100vh;
+  transition: background-color 0.3s, color 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.dark-mode {
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
+
+.dark-mode .card {
+  background-color: #2d2d2d;
+  border-color: #404040;
+}
+
+.dark-mode .form-control {
+  background-color: #333;
+  border-color: #404040;
+  color: #fff;
+}
+
+.dark-mode .form-control:focus {
+  background-color: #404040;
+  color: #fff;
+}
+
+.expense-item {
+  transition: transform 0.2s;
+}
+
+.expense-item:hover {
+  transform: translateX(5px);
+}
+
+.chart-container {
+  height: 300px;
+  margin: 20px 0;
+}
+
+.summary-card {
+  transition: transform 0.3s;
+}
+
+.summary-card:hover {
+  transform: translateY(-5px);
+}
+
+.btn-icon {
+  padding: 0.25rem 0.5rem;
+  margin: 0 0.25rem;
+}
+
+.expense-amount {
+  font-weight: bold;
+  color: #dc3545;
+}
+
+.income-amount {
+  font-weight: bold;
+  color: #198754;
+}
+
+.balance-amount {
+  font-weight: bold;
+  color: #0d6efd;
+}
+
+.dark-mode .expense-amount {
+  color: #ff4d4d;
+}
+
+.dark-mode .income-amount {
+  color: #4dff4d;
+}
+
+.dark-mode .balance-amount {
+  color: #4d4dff;
+}
+
+/* Footer Styles */
+.footer {
+  margin-top: auto;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .footer {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.hover-link {
+  transition: color 0.3s ease;
+}
+
+.hover-link:hover {
+  color: #0d6efd !important;
+}
+
+.dark-mode .hover-link:hover {
+  color: #4d8bff !important;
+}
+
+/* Social Icons */
+.social-icons {
+  display: flex;
+  gap: 1rem;
+}
+
+.social-icon-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #6c757d;
+  background-color: transparent;
+  border: 2px solid #6c757d;
+  transition: all 0.3s ease;
+}
+
+.social-icon-link:hover {
+  color: white;
+  background-color: var(--hover-color);
+  border-color: var(--hover-color);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .social-icon-link {
+  color: #a1a1a1;
+  border-color: #a1a1a1;
+}
+
+.dark-mode .social-icon-link:hover {
+  color: white;
+  border-color: var(--hover-color);
+}
+
+/* Make footer stick to bottom */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+} 

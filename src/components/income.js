@@ -9,6 +9,26 @@ const Income = () => {
   const [incomes, setIncomes] = useState([]); // State to store incomes
   const backendUrl = config.backendUrl; // Extract the backendUrl from the config
 
+  // Make a GET API request to FastAPI backend to get all incomes
+
+  const fetchIncomes = async () => {
+    try {
+      const response = await fetch(`${backendUrl}/incomes/`);
+      if (response.ok) {
+        const data = await response.json();
+        setIncomes(data); // Set the retrieved incomes to state
+      } else {
+        console.error("Failed to fetch incomes");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  // Fetch incomes on component mount
+  useEffect(() => {
+    fetchIncomes();
+  }, []); // Empty dependency array means this effect runs once when the component mounts
+
   // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent the default form submission behavior
@@ -30,6 +50,7 @@ const Income = () => {
       if (response.ok) {
         // If the request was successful
         console.log("Income created successfully");
+        fetchIncomes(); //Reload the incomes table by re-fetching the data from the backend
 
         // Optionally reset form inputs
         setIncomeName("");
@@ -49,25 +70,6 @@ const Income = () => {
       console.error("Error creating income:", error);
     }
   };
-
-  // Make a GET API request to FastAPI backend to get all incomes
-  useEffect(() => {
-    const fetchIncomes = async () => {
-      try {
-        const response = await fetch(`${backendUrl}/incomes/`);
-        if (response.ok) {
-          const data = await response.json();
-          setIncomes(data); // Set the retrieved incomes to state
-        } else {
-          console.error("Failed to fetch incomes");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-
-    fetchIncomes(); // Fetch incomes on component mount
-  }, []); // Empty dependency array means this effect runs once when the component mounts
 
   return (
     <div>
