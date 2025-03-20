@@ -1,70 +1,93 @@
-# Getting Started with Create React App
+# Budget Calculator API
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A FastAPI-based REST API for managing personal budgets and tracking income/expenses.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- User authentication with JWT tokens
+- User management (registration, profile updates)
+- Transaction management (income and expenses)
+- Role-based access control
+- PostgreSQL database with async support
+- API documentation with Swagger UI
 
-### `npm start`
+## Prerequisites
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Python 3.7+
+- PostgreSQL
+- Virtual environment (recommended)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Installation
 
-### `npm test`
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/budget-calculator-api.git
+cd budget-calculator-api
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. Create and activate a virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
 
-### `npm run build`
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4. Create a `.env` file in the root directory with the following content:
+```
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/budget_calculator
+SECRET_KEY=your-secret-key-here
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+5. Initialize the database:
+```bash
+python -m app.db.init_db
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Running the Application
 
-### `npm run eject`
+Start the FastAPI server:
+```bash
+python run.py
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+The API will be available at `http://localhost:8000`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+API documentation will be available at:
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## API Endpoints
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Authentication
+- `POST /api/v1/auth/register` - Register a new user
+- `POST /api/v1/auth/login` - Login and get access token
 
-## Learn More
+### Users
+- `GET /api/v1/users/me` - Get current user info
+- `PUT /api/v1/users/me` - Update current user info
+- `GET /api/v1/users` - List all users (admin only)
+- `GET /api/v1/users/{user_id}` - Get user by ID (admin only)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Transactions
+- `POST /api/v1/transactions` - Create a new transaction
+- `GET /api/v1/transactions` - List user's transactions
+- `GET /api/v1/transactions/{transaction_id}` - Get transaction by ID
+- `PUT /api/v1/transactions/{transaction_id}` - Update transaction
+- `DELETE /api/v1/transactions/{transaction_id}` - Delete transaction
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Development
 
-### Code Splitting
+To run tests:
+```bash
+pytest
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## License
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project is licensed under the MIT License.

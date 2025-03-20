@@ -1,79 +1,51 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import { transactions as transactionsApi } from '../services/api';
 
 const BudgetContext = createContext();
 
 const initialState = {
-  user: null,
-  isAuthenticated: false,
-  income: 0,
-  expenses: [],
-  darkMode: false,
-  currency: {
-    code: 'USD',
-    symbol: '$',
-    name: 'US Dollar'
-  },
-  availableCurrencies: [
-    { code: 'USD', symbol: '$', name: 'US Dollar' },
-    { code: 'NGN', symbol: '₦', name: 'Nigerian Naira' },
-    { code: 'GBP', symbol: '£', name: 'British Pound' },
-    { code: 'EUR', symbol: '€', name: 'Euro' },
-  ]
+  transactions: [],
+  currency: { symbol: '$', code: 'USD' },
+  loading: false,
+  error: null,
+  stats: {
+    totalIncome: 0,
+    totalExpenses: 0,
+    balance: 0
+  }
 };
 
 function budgetReducer(state, action) {
   switch (action.type) {
-    case 'LOGIN':
-      return { 
-        ...state, 
-        user: action.payload,
-        isAuthenticated: true 
-      };
-    case 'LOGOUT':
-      return { 
-        ...initialState,
-        darkMode: state.darkMode 
-      };
-    case 'UPDATE_PROFILE':
-      return { 
-        ...state, 
-        user: { ...state.user, ...action.payload } 
-      };
-    case 'SET_CURRENCY':
-      return { 
-        ...state, 
-        currency: action.payload 
-      };
-    case 'SET_INCOME':
-      return { ...state, income: action.payload };
-    case 'ADD_EXPENSE':
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload };
+    case 'SET_ERROR':
+      return { ...state, error: action.payload };
+    case 'SET_TRANSACTIONS':
+      return { ...state, transactions: action.payload };
+    case 'ADD_TRANSACTION':
       return {
         ...state,
-        expenses: [...state.expenses, { 
-          ...action.payload, 
-          id: Date.now(),
-          date: new Date().toISOString(),
-          currency: state.currency.code
-        }]
+        transactions: [...state.transactions, action.payload]
       };
-    case 'DELETE_EXPENSE':
+    case 'UPDATE_TRANSACTION':
       return {
         ...state,
-        expenses: state.expenses.filter(expense => expense.id !== action.payload)
-      };
-    case 'EDIT_EXPENSE':
-      return {
-        ...state,
-        expenses: state.expenses.map(expense =>
-          expense.id === action.payload.id 
-            ? { ...action.payload, currency: state.currency.code }
-            : expense
+        transactions: state.transactions.map(transaction =>
+          transaction.id === action.payload.id ? action.payload : transaction
         )
       };
-    case 'TOGGLE_DARK_MODE':
-      return { ...state, darkMode: !state.darkMode };
-    case 'LOAD_DATA':
-      return { ...state, ...action.payload };
+    case 'DELETE_TRANSACTION':
+      return {
+        ...state,
+        transactions: state.transactions.filter(
+          transaction => transaction.id !== action.payload
+        )
+      };
+    case 'SET_CURRENCY':
+      return { ...state, currency: action.payload };
+    case 'SET_STATS':
+      return { ...state, stats: action.payload };
     default:
       return state;
   }
@@ -82,39 +54,97 @@ function budgetReducer(state, action) {
 export function BudgetProvider({ children }) {
   const [state, dispatch] = useReducer(budgetReducer, initialState);
 
-  // Load data from localStorage on mount
+  // Load transactions when component mounts
   useEffect(() => {
-    const savedData = localStorage.getItem('budgetData');
-    if (savedData) {
-      dispatch({ type: 'LOAD_DATA', payload: JSON.parse(savedData) });
-    }
+    loadTransactions();
   }, []);
 
-  // Save data to localStorage whenever state changes
-  useEffect(() => {
-    if (state.isAuthenticated) {
-      localStorage.setItem('budgetData', JSON.stringify(state));
+  // Load transactions from API
+  const loadTransactions = async () => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      const transactions = await transactionsApi.getAll();
+      dispatch({ type: 'SET_TRANSACTIONS', payload: transactions });
+      await loadStats();
+    } catch (error) {
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
-  }, [state]);
+  };
 
-  const value = {
-    state,
-    login: (userData) => dispatch({ type: 'LOGIN', payload: userData }),
-    logout: () => {
-      localStorage.removeItem('budgetData');
-      dispatch({ type: 'LOGOUT' });
-    },
-    updateProfile: (data) => dispatch({ type: 'UPDATE_PROFILE', payload: data }),
-    setCurrency: (currency) => dispatch({ type: 'SET_CURRENCY', payload: currency }),
-    setIncome: (income) => dispatch({ type: 'SET_INCOME', payload: Number(income) }),
-    addExpense: (expense) => dispatch({ type: 'ADD_EXPENSE', payload: expense }),
-    deleteExpense: (id) => dispatch({ type: 'DELETE_EXPENSE', payload: id }),
-    editExpense: (expense) => dispatch({ type: 'EDIT_EXPENSE', payload: expense }),
-    toggleDarkMode: () => dispatch({ type: 'TOGGLE_DARK_MODE' })
+  // Load transaction stats
+  const loadStats = async () => {
+    try {
+      const stats = await transactionsApi.getStats();
+      dispatch({ type: 'SET_STATS', payload: stats });
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    }
+  };
+
+  // Add new transaction
+  const addTransaction = async (transaction) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      const newTransaction = await transactionsApi.create(transaction);
+      dispatch({ type: 'ADD_TRANSACTION', payload: newTransaction });
+      await loadStats();
+      return newTransaction;
+    } catch (error) {
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  // Update transaction
+  const updateTransaction = async (id, transaction) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      const updatedTransaction = await transactionsApi.update(id, transaction);
+      dispatch({ type: 'UPDATE_TRANSACTION', payload: updatedTransaction });
+      await loadStats();
+      return updatedTransaction;
+    } catch (error) {
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  // Delete transaction
+  const deleteTransaction = async (id) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      await transactionsApi.delete(id);
+      dispatch({ type: 'DELETE_TRANSACTION', payload: id });
+      await loadStats();
+    } catch (error) {
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  // Update currency settings
+  const updateCurrency = (currency) => {
+    dispatch({ type: 'SET_CURRENCY', payload: currency });
   };
 
   return (
-    <BudgetContext.Provider value={value}>
+    <BudgetContext.Provider
+      value={{
+        state,
+        addTransaction,
+        updateTransaction,
+        deleteTransaction,
+        updateCurrency,
+      }}
+    >
       {children}
     </BudgetContext.Provider>
   );
@@ -126,4 +156,6 @@ export function useBudget() {
     throw new Error('useBudget must be used within a BudgetProvider');
   }
   return context;
-} 
+}
+
+export default BudgetContext; 
