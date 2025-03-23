@@ -66,12 +66,12 @@ function Dashboard() {
                   <h6 className="card-subtitle mb-2 text-muted">Total Expenses</h6>
                   <h3 className="card-title text-danger mb-0">
                     {state.currency.symbol}{totalExpenses.toFixed(2)}
-                  </h3>
-                </div>
+              </h3>
+            </div>
                 <div className="bg-danger bg-opacity-10 p-3 rounded-circle">
                   <FiTrendingDown className="text-danger" size={24} />
-                </div>
-              </div>
+          </div>
+        </div>
               <p className="card-text text-muted small">Total spending this period</p>
             </div>
           </div>
@@ -85,7 +85,7 @@ function Dashboard() {
                   <h6 className="card-subtitle mb-2 text-muted">Current Balance</h6>
                   <h3 className={`card-title mb-0 ${balance >= 0 ? 'text-primary' : 'text-danger'}`}>
                     {state.currency.symbol}{balance.toFixed(2)}
-                  </h3>
+              </h3>
                 </div>
                 <div className="bg-primary bg-opacity-10 p-3 rounded-circle">
                   <FiDollarSign className="text-primary" size={24} />
@@ -109,8 +109,8 @@ function Dashboard() {
               <FiPlus size={18} />
               Add Transaction
             </button>
-          </div>
         </div>
+      </div>
 
         <div className="card-body">
           {showTransactionForm && (

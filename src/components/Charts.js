@@ -26,7 +26,7 @@ function Charts({ transactions, currency }) {
       }
       if (transaction.type === 'income') {
         dailyTotals[date].income += transaction.amount;
-      } else {
+    } else {
         dailyTotals[date].expense += transaction.amount;
       }
     });
@@ -59,7 +59,7 @@ function Charts({ transactions, currency }) {
     <div className="mb-4">
       {/* Line Chart */}
       <div className="card mb-4">
-        <div className="card-body">
+      <div className="card-body">
           <h3 className="card-title h5 mb-4">Income vs Expenses Over Time</h3>
           <div style={{ height: '400px' }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -128,24 +128,24 @@ function Charts({ transactions, currency }) {
             <div className="card-body">
               <h3 className="card-title h5 mb-4">Expenses by Category</h3>
               <div style={{ height: '400px' }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
                       data={pieChartData.expense}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
                       outerRadius={120}
                       label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
                     >
                       {pieChartData.expense.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
+                  ))}
+                </Pie>
                     <Tooltip formatter={formatCurrency} />
-                  </PieChart>
-                </ResponsiveContainer>
+              </PieChart>
+            </ResponsiveContainer>
               </div>
             </div>
           </div>
